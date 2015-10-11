@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 
 #.--    .-""-.
@@ -44,8 +44,33 @@ echo "1 für hier erstellen\n"
 echo "2 für auswählen wo erstellt werden soll\n"
 echo "Default ist 1\n"
 
+select auswahl in 1 2
+do
+  case $auswahl in
+    1 ) initProject $PWD
+      ;;
+    2 ) askDir
+      ;;
+  esac
+done
 
+#Initalisiert das Projekt. Erstellt die Ordner und einige grund Dateien.
+initProject() {
+  mkdir $1
+  mkdir $1/lib
+  mkdir $1/bin
+  mkdir $1/src
+  echo "include <stdio.h>
+  int main(){
+    printf(\"Hello World\")
+  }" >> $1\src\quelle.c
 
-ceckDir() {
+  echo "Projekt fertig erstellt"
+}
+
+askDir() {
+  echo "Wo soll das Projekt denn erstellt werden:"
+  read -p dir
+find . $dir 
   true
-  }
+}
