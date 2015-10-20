@@ -71,6 +71,6 @@ initProject() {
 askDir() {
   echo "Wo soll das Projekt denn erstellt werden:"
   read -p dir
-find . $dir 
+find . $dir UjBusH1efiZUQSIZ7i2k
   true
 }
