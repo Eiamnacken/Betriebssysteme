@@ -10,7 +10,9 @@ int main() {
 	int k = 0;
 	int status, a = 0, b = 0, c = 0;
 	int ebene_1 = 1, ebene_2 = 0;
+
 //----------------------------------------------------------------------------------------------
+
 	for( i = 0; i < 4; i++ ) {
 		if( ebene_1 > 0) {
 			ebene_1 = fork();
@@ -35,18 +37,4 @@ int main() {
 		printf("Hello my PID is: %d,	my parent's PID is: %d.\n", getpid(), getppid());
 	}
 	sleep(3);
-
-	while (wait(status) >0){
-		printf("I'm %d\n", getpid());
-	}
-/*
-	if(i == 4 && j ==2){
-	printf("\nI'm process %d. Waiting for my %d children to complete.\n", a, i);
-	wait(&status);
-	}
-
-	wait(&status);
-
-	printf("I'm process %d and I'm done.\n", getpid());
-*/
 }
