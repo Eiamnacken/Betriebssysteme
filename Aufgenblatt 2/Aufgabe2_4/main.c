@@ -44,14 +44,17 @@ int main() {
         }
 
     }
-    waitId=0;
     sleep(sleep_state);
     //vater wartet auf beendigung aller Kinder
     //Aus der man:  WNOHANG return immediately if no child has exited.
     //Also benutze waitpid und frage auf rückgabe 0 denn dann gibt es kein weiteres kind mehr
-    while (waitpid(childrens[waitId],&status,WNOHANG)!=0) {
-        printf("Waiting for my Childrens %d\n",childrens[waitId]);
-        waitId+=waitId+1;
+    if (fork_value>0) {
+
+        for (waitId = HOWMANYCHILDS; waitId >=0; waitId--) {
+            while (waitpid(childrens[waitId],&status,WNOHANG)>0) {
+                printf("Waiting for my %d childrens to complete\n",waitId);
+            }
+        }
     }
     //Alle Prozesse verabschieden sich
     printf("... und tschüss %d.\n", getpid());
