@@ -4,59 +4,59 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
-#define HOWMANYCHILDS 4
+//wie viele unterprozesse
+#define MAXCHILDRENS 20
 
+/**
+ * Erstellt einen baum mit 20 unterprozessen
+ */
 int main() {
     int i;
-    int j;
-    int waitId;
     int status;
-    int fork_value = 1;
-    int sleep_state=4;
-    int childrens[HOWMANYCHILDS]={0};
+    int fork_value;
+    int sleep_stat=1;
+    //Starte bei 4 weil erste generation braucht 4 kinder
+    int generation=4;
+    //Anzahl an kindern reduzieren
+    int dividend=2;
+    //Anzahl der Kinder für jeden prozess
+    int children=0;
 
 
-    for( i = 0; i < HOWMANYCHILDS; i++ ) {
-        //Schaut ob es sich um einen Vater handelt wenn ja fork() und dekrementiert sleep_state um einen
-        //sleep_state sorgt dafuer, dass sich die Prozesse von untern nach oben beenden
-        if( fork_value > 0) {
-            fork_value = fork();
-            childrens[i]=fork_value;
-            //Jedes Kind meldet sich
-            if(fork_value==0){
-                printf("Hello, my PID is %d, my parents PID is %d\n",getpid(),getppid());
-                //Setze i auf anzahl der for durchläufe um zu verhindern das Kinder den Prozess nochmal durchgehen
-                i=HOWMANYCHILDS;
-                for(j=0;j<2;j++){
-                    //Beginne 2. runde
-                    fork_value=fork();
-                    if (fork_value==0) {
-                        printf("Hello, my PID is %d, my parents PID is %d\n",getpid(),getppid());
-                        fork();
-                        if(fork_value==0) printf("Hello, my PID is %d, my parents PID is %d\n",getpid(),getppid());
-                        //Wieder setze j=2 damit die kinder nicht wieder die forscheleife starten.
-                        j=2;
-                    }
+    for( i = 0; i < MAXCHILDRENS; i++ ) {
+        if(generation!=children&&generation!=0){
+            fork_value=fork();
+            if (fork_value==0) {
+                children=0;
+                //Wenn an der letzten generation setze generation auf 0
+                //weil keine kinder mehr gebracuht werden
+                if (dividend!=1) {
+                    //Dividiere durch dividend um die anzahl an kindern zu reduzieren
+                    generation=generation/dividend;
+                }else {
+                    generation=0;
                 }
+                printf("Hello, my PID is %d, my parents PId is %d\n",getpid(),getppid());
+                //So wartet der oberst Vater am kürzesten
+                sleep_stat=sleep_stat+1;
+            }else if(fork_value>0){
+                children=children+1;
             }
-            //Damit der oberste vater am kürzesten wartet.
-            sleep_state=sleep_state+1;
         }
 
     }
-    sleep(sleep_state);
-    //vater wartet auf beendigung aller Kinder
-    //Aus der man:  WNOHANG return immediately if no child has exited.
-    //Also benutze waitpid und frage auf rückgabe 0 denn dann gibt es kein weiteres kind mehr
-    if (fork_value>0) {
+    sleep(sleep_stat);
+    if(fork_value>0){
+        if (children==1) {
+            printf("Waiting for my child\n");
+        }else {
+            printf("Waiting for my %d children\n",children);
+        }
+        for (i=0; i < children; i++) {
+            wait(&status);
 
-        for (waitId = HOWMANYCHILDS; waitId >=0; waitId--) {
-            while (waitpid(childrens[waitId],&status,WNOHANG)>0) {
-                printf("Waiting for my %d childrens to complete\n",waitId);
-            }
         }
     }
-    //Alle Prozesse verabschieden sich
-    printf("... und tschüss %d.\n", getpid());
+    printf("... und tschüss %d\n",getpid());
 }
 
