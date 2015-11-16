@@ -24,18 +24,12 @@ int main() {
 
 
     for( i = 0; i < MAXCHILDRENS; i++ ) {
-        if(generation!=children&&generation!=0){
+        if((generation-children)!=0){
             fork_value=fork();
             if (fork_value==0) {
                 children=0;
-                //Wenn an der letzten generation setze generation auf 0
-                //weil keine kinder mehr gebracuht werden
-                if (dividend!=1) {
-                    //Dividiere durch dividend um die anzahl an kindern zu reduzieren
-                    generation=generation/dividend;
-                }else {
-                    generation=0;
-                }
+                //Generation immer wieder teilen um auf 1 zu kommen heißt nur noch ein Kind wird gebraucht
+                generation=generation/dividend;
                 printf("Hello, my PID is %d, my parents PId is %d\n",getpid(),getppid());
                 //So wartet der oberst Vater am kürzesten
                 sleep_stat=sleep_stat+1;
@@ -45,6 +39,7 @@ int main() {
         }
 
     }
+    //Ausgabe ist besser anzusehen
     sleep(sleep_stat);
     if(fork_value>0){
         if (children==1) {
