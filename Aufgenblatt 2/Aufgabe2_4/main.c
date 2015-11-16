@@ -30,7 +30,7 @@ int main() {
                 children=0;
                 //Generation immer wieder teilen um auf 1 zu kommen heißt nur noch ein Kind wird gebraucht
                 generation=generation/dividend;
-                printf("Hello, my PID is %d, my parents PId is %d\n",getpid(),getppid());
+                printf("Hello, my PID is %d, my parents PID is %d\n",getpid(),getppid());
                 //So wartet der oberst Vater am kürzesten
                 sleep_stat=sleep_stat+1;
             }else if(fork_value>0){
