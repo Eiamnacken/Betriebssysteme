@@ -1,11 +1,6 @@
-//Sven Marquardt und Sheraz Azad
-// myfamily.c (aka bsp7a.c )
-#include <sys/types.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-//wie viele unterprozesse
-#define MAXCHILDRENS 20
+//Sven Marquardt und Sheraz Azad myfamily.c (aka bsp7a.c ) #include
+//<sys/types.h> #include <unistd.h> #include <stdio.h> #include <stdlib.h> wie
+//viele unterprozesse #define MAXCHILDREN 20
 
 /**
  * Erstellt einen baum mit 20 unterprozessen
@@ -23,8 +18,7 @@ int main() {
     int children=0;
 
 
-    for( i = 0; i < MAXCHILDRENS; i++ ) {
-        if((generation-children)!=0){
+        while((generation-children)!=0){
             fork_value=fork();
             if (fork_value==0) {
                 children=0;
@@ -36,16 +30,16 @@ int main() {
             }else if(fork_value>0){
                 children=children+1;
             }
-        }
+
 
     }
     //Ausgabe ist besser anzusehen
     sleep(sleep_stat);
     if(fork_value>0){
         if (children==1) {
-            printf("Waiting for my child\n");
+            printf("Waiting for my child, my PID is %d\n",getpid());
         }else {
-            printf("Waiting for my %d children\n",children);
+            printf("Waiting for my %d children my PID is %d\n",children,getpid());
         }
         for (i=0; i < children; i++) {
             wait(&status);
@@ -54,4 +48,3 @@ int main() {
     }
     printf("... und tschüss %d\n",getpid());
 }
-
