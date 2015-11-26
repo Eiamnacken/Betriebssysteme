@@ -3,6 +3,10 @@
 #include <sys/types.h>
 #include <stdlib.h>
 
+//Anzahl an threads die erstellt werden sollen
+#define MAX_THREADS 20
+//Anzahl der maximalen Kinder pro Thread
+#define MAX_CHILDREN 16
 
 /**
  * Rundet einen wert auf der ab.
@@ -28,19 +32,17 @@ void *function(void *args);
 
 static pthread_mutex_t block;
 
-//Anzahl an threads die erstellt werden sollen
-#define MAX_THREADS
 //Anzahl an erstellten threads
 int totalThreads;
 
 int main(void)
 {
-    double i = 5.5;
-    printf("%d\n",floor(i));
+
 
 }
 
 void *function(void *args){
+
 
 }
 
@@ -61,4 +63,6 @@ int min(int value, int max){
     }
     return value;
 }
+
+
 
