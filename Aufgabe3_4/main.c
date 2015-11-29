@@ -36,7 +36,7 @@ int max_children_thread();
  */
 void *function(void *args);
 
-//static pthread_mutex_t block;
+static pthread_mutex_t block;
 
 //Anzahl an erstellten threads
 int totalThreads;
@@ -45,14 +45,37 @@ int divisor;
 
 int main(void)
 {
-    int first_generation_children=max_children_thread();
-    printf("%d Kinder",first_generation_children);
-    return 0;
+    pthread_t thread;
+    int create_children;
+    pthread_mutex_init(&block,NULL);
+    totalThreads=0;
+    divisor=2;
+    create_children=max_children_thread();
+    pthread_create(&thread,NULL,function,create_children);
+    pthread_join(thread,NULL);
 }
 
 void *function(void *args){
+    int create_children;
+    int current_children;
+    int i;
+    create_children = min(flooor(*(int)args/2),16);
+    pthread_t threads[create_children];
+    current_children=0;
+    i=0;
+    while (create_children!=current_children) {
+        pthread_mutex_lock(&block);
+        if(totalThreads<MAX_THREADS){
+            pthread_create(&(threads[i]),NULL,function,create_children);
+            totalThreads=totalThreads+1;
+            current_children=current_children+1;
+        }
+        pthread_mutex_unlock(&block);
+    }
 
-
+    for(i;i>0;i--){
+        pthread_join(threads[i],NULL);
+    }
 }
 
 
@@ -73,7 +96,7 @@ int min(int value, int max){
     return value;
 }
 
-int max_children_thread(){
+int max_children_thread(void){
     uint threads = 0;
     uint children=8;
     ushort multiplikator=1;
