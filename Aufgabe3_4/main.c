@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 //Anzahl an threads die erstellt werden sollen
-#define MAX_THREADS 30
+#define MAX_THREADS 21
 //Anzahl der maximalen Kinder pro Thread
 #define MAX_CHILDREN 16
 
@@ -50,7 +50,7 @@ int main(void)
     pthread_mutex_init(&block,0);
     totalThreads=1;
     divisor=2;
-    create_children=max_children_thread()*2;
+    create_children=max_children_thread();
     pthread_create(&thread,NULL,&function,&create_children);
     pthread_join(thread,NULL);
     printf("Kinder erzeugt %d\n",totalThreads);
