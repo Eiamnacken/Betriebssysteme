@@ -51,29 +51,30 @@ int main(void)
     totalThreads=0;
     divisor=2;
     create_children=max_children_thread();
-    pthread_create(&thread,NULL,function,create_children);
+    pthread_create(&thread,NULL,function,&create_children);
     pthread_join(thread,NULL);
+    return 0;
 }
 
 void *function(void *args){
     int create_children;
     int current_children;
     int i;
-    create_children = min(flooor(*(int)args/2),16);
+    create_children = min(flooor(*((int*)args)/2),16);
     pthread_t threads[create_children];
     current_children=0;
     i=0;
     while (create_children!=current_children) {
         pthread_mutex_lock(&block);
         if(totalThreads<MAX_THREADS){
-            pthread_create(&(threads[i]),NULL,function,create_children);
+            pthread_create(&(threads[i]),NULL,function,&create_children);
             totalThreads=totalThreads+1;
             current_children=current_children+1;
         }
         pthread_mutex_unlock(&block);
     }
 
-    for(i;i>0;i--){
+    for(;i>0;i--){
         pthread_join(threads[i],NULL);
     }
 }
