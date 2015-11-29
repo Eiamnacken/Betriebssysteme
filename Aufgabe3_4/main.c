@@ -47,11 +47,11 @@ int main(void)
 {
     pthread_t thread;
     int create_children;
-    pthread_mutex_init(&block,NULL);
-    totalThreads=0;
+    pthread_mutex_init(&block,0);
+    totalThreads=1;
     divisor=2;
-    create_children=max_children_thread();
-    pthread_create(&thread,NULL,function,&create_children);
+    create_children=max_children_thread()*2;
+    pthread_create(&thread,NULL,&function,&create_children);
     pthread_join(thread,NULL);
     return 0;
 }
@@ -60,23 +60,30 @@ void *function(void *args){
     int create_children;
     int current_children;
     int i;
-    create_children = min(flooor(*((int*)args)/2),16);
+    int j;
+    create_children = min(flooor(*((int*)args)/divisor),MAX_CHILDREN);
     pthread_t threads[create_children];
     current_children=0;
     i=0;
-    while (create_children!=current_children) {
+    j=0;
+    printf("Hallo von thread %d\n",pthread_self());
+    while ((create_children-current_children)>0) {
         pthread_mutex_lock(&block);
+
         if(totalThreads<MAX_THREADS){
-            pthread_create(&(threads[i]),NULL,function,&create_children);
+            pthread_create(&threads[i],NULL,function,&create_children);
             totalThreads=totalThreads+1;
             current_children=current_children+1;
+            i=i+1;
         }
         pthread_mutex_unlock(&block);
     }
 
-    for(;i>0;i--){
-        pthread_join(threads[i],NULL);
+    for(j=0;j<i;j++){
+
+        pthread_join(threads[j],NULL);
     }
+    printf("Tschüss von %d\n",pthread_self());
 }
 
 
