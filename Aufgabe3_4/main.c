@@ -104,7 +104,7 @@ int min(int value, int max){
     return value;
 }
 
-//Hier entsteht der fehler wenn es nicht genau 21 threads sind oder 160, dann kommt nicht die benötigte anzahl an threads raus
+
 int max_children_thread(void){
     uint threads = 0;
     uint children=8;
