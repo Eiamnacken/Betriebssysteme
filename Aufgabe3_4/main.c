@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 //Anzahl an threads die erstellt werden sollen
-#define MAX_THREADS 21
+#define MAX_THREADS 30
 //Anzahl der maximalen Kinder pro Thread
 #define MAX_CHILDREN 16
 
@@ -53,6 +53,7 @@ int main(void)
     create_children=max_children_thread()*2;
     pthread_create(&thread,NULL,&function,&create_children);
     pthread_join(thread,NULL);
+    printf("Kinder erzeugt %d\n",totalThreads);
     return 0;
 }
 
@@ -61,23 +62,22 @@ void *function(void *args){
     int current_children;
     int i;
     int j;
-    create_children = min(flooor(*((int*)args)/divisor),MAX_CHILDREN);
+    int children_next;
+    create_children = *(int*)args;
+    children_next = min(flooor(create_children/divisor),MAX_CHILDREN);
     pthread_t threads[create_children];
     current_children=0;
     i=0;
     j=0;
-    printf("Hallo von thread %d\n",pthread_self());
-    while ((create_children-current_children)>0) {
-        pthread_mutex_lock(&block);
-
-        if(totalThreads<MAX_THREADS){
-            pthread_create(&threads[i],NULL,function,&create_children);
-            totalThreads=totalThreads+1;
-            current_children=current_children+1;
-            i=i+1;
-        }
-        pthread_mutex_unlock(&block);
+    printf("Hallo von thread %d kreiere %d Kinder\n",pthread_self(),create_children);
+    pthread_mutex_lock(&block);
+    while ((create_children-current_children)>0&&totalThreads<MAX_THREADS) {
+        pthread_create(&threads[i],NULL,function,&children_next);
+        totalThreads=totalThreads+1;
+        current_children=current_children+1;
+        i=i+1;
     }
+    pthread_mutex_unlock(&block);
 
     for(j=0;j<i;j++){
 
@@ -104,6 +104,7 @@ int min(int value, int max){
     return value;
 }
 
+//Hier entsteht der fehler wenn es nicht genau 21 threads sind oder 160, dann kommt nicht die benötigte anzahl an threads raus
 int max_children_thread(void){
     uint threads = 0;
     uint children=8;
